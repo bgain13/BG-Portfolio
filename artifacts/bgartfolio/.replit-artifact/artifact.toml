@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Bivash Portfolio Website"
+description = "A personal portfolio website for Bivash Gain, a video editor and motion designer, showcasing selected work, professional experience, and contact information for prospective clients and employers."
+version = "1.0.0"
+id = "artifacts/bgartfolio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20388
+
+[services.development]
+run = "pnpm --filter @workspace/bgartfolio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/bgartfolio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/bgartfolio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20388"
+BASE_PATH = "/"
