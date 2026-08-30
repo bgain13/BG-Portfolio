@@ -9,6 +9,17 @@ export type Project = {
   link?: string;
 };
 
+export type Reel = {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  youtubeUrl?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  link?: string;
+};
+
 export type ContactInfo = {
   email: string;
   phone: string;
@@ -137,6 +148,28 @@ export const projects: Project[] = [
     description: "A longer project hosted on Google Drive.",
     driveUrl: "https://drive.google.com/file/d/1pTzmBGAMSSqYpWgNLYCi0U4PTJB2JseR/view?usp=drivesdk",
   },
+];
+
+export const reels: Reel[] = [
+  {
+    id: "reel-1",
+    title: "Wedding / Event Highlight",
+    category: "9:16 / Event",
+    description: "A vertical highlight built for fast, emotional viewing.",
+    youtubeUrl: projects[0].youtubeUrl,
+    link: projects[0].youtubeUrl,
+  },
+  {
+    id: "reel-2",
+    title: "Social Media Short",
+    category: "9:16 / Social",
+    description: "A short-form edit made for mobile-first feeds.",
+    youtubeUrl: projects[1].youtubeUrl,
+    link: projects[1].youtubeUrl,
+  },
+  // Add future portrait media here:
+  // { id: "reel-3", title: "Poster", category: "9:16 / Image", description: "...", imageUrl: "/assets/poster.jpg" },
+  // { id: "reel-4", title: "Vertical Film", category: "9:16 / Video", description: "...", videoUrl: "/assets/reel.mp4" },
 ];
 
 export const driveFolders = [

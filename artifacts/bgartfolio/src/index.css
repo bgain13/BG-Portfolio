@@ -370,6 +370,82 @@
     hsl(var(--secondary));
 }
 
+.reels-section {
+  background:
+    radial-gradient(circle at 88% 14%, rgba(216, 242, 63, 0.08), transparent 22rem),
+    hsl(var(--background));
+}
+
+.reel-rail {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 2px 2px 22px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.reel-rail:active {
+  cursor: grabbing;
+}
+
+.reel-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-card {
+  flex: 0 0 clamp(220px, 22vw, 300px);
+  overflow: hidden;
+  border: 1px solid rgba(236, 235, 226, 0.13);
+  background: hsl(var(--card));
+  scroll-snap-align: start;
+  transition: border-color 300ms ease, transform 300ms ease;
+}
+
+.reel-card:hover {
+  border-color: rgba(216, 242, 63, 0.65);
+  transform: translateY(-5px);
+}
+
+.reel-media {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: hsl(var(--secondary));
+}
+
+.reel-media::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  border: 1px solid rgba(236, 235, 226, 0.1);
+  box-shadow: inset 0 -80px 80px rgba(16, 20, 19, 0.3);
+}
+
+.reel-index {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 2;
+  padding: 5px 7px;
+  color: hsl(var(--primary));
+  background: rgba(16, 20, 19, 0.82);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.reel-copy {
+  display: flex;
+  min-height: 170px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+}
+
 .skills-ticker {
   display: flex;
   max-width: 700px;
@@ -570,6 +646,10 @@
 }
 
 @media (max-width: 767px) {
+  .reel-card {
+    flex-basis: min(78vw, 270px);
+  }
+
   .work-grid {
     grid-template-columns: minmax(0, 1fr);
   }

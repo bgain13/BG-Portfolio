@@ -25,7 +25,9 @@ import {
   driveFolders,
   personalInfo,
   projects,
+  reels,
   skills,
+  type Reel,
   type Project,
 } from '@/lib/portfolio-data';
 import { getYouTubeEmbedUrl } from '@/lib/youtube';
@@ -34,6 +36,7 @@ import { Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
 const queryClient = new QueryClient();
 
 const navItems = [
+  { label: 'Reels', href: '#reels' },
   { label: 'About', href: '#about' },
   { label: 'Work', href: '#work' },
   { label: 'Contact', href: '#contact' },
@@ -101,6 +104,7 @@ function Home() {
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} activeSection={activeSection} />
       <main>
         <HeroSection />
+        <ReelsSection />
         <AboutSection />
         <SkillsSection />
         <WorkSection />
@@ -254,13 +258,106 @@ function HeroSection() {
   );
 }
 
+function ReelsSection() {
+  return (
+    <section id="reels" className="reels-section section-rule" data-testid="section-reels">
+      <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end reveal">
+          <div>
+            <SectionMarker number="02" label="Reels" />
+            <h2 className="mt-9 font-display text-8xl leading-[0.8] tracking-wide text-foreground sm:text-[10rem]">
+              Small <span className="text-primary">frame.</span>
+            </h2>
+          </div>
+          <div className="max-w-[330px] md:pb-2">
+            <p className="text-sm leading-7 text-white/55">
+              Vertical edits, visual posts, and quick cuts made for the way people watch now.
+            </p>
+            <p className="mt-4 font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">
+              Swipe or drag to explore →
+            </p>
+          </div>
+        </div>
+
+        <div className="reel-rail mt-14" role="list" aria-label="Portrait reels">
+          {reels.map((reel, index) => (
+            <ReelCard key={reel.id} reel={reel} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReelCard({ reel, index }: { reel: Reel; index: number }) {
+  const embedUrl = reel.youtubeUrl ? getYouTubeEmbedUrl(reel.youtubeUrl) : null;
+
+  return (
+    <article className="reel-card reveal" role="listitem" data-testid={`card-reel-${reel.id}`}>
+      <div className="reel-media">
+        {embedUrl ? (
+          <iframe
+            src={embedUrl}
+            title={reel.title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full border-0"
+            data-testid={`iframe-reel-${reel.id}`}
+          />
+        ) : reel.videoUrl ? (
+          <video
+            src={reel.videoUrl}
+            controls
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-cover"
+            data-testid={`video-reel-${reel.id}`}
+          />
+        ) : reel.imageUrl ? (
+          <img
+            src={reel.imageUrl}
+            alt={reel.title}
+            loading="lazy"
+            className="h-full w-full object-cover"
+            data-testid={`image-reel-${reel.id}`}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-secondary text-center font-mono-ui text-[9px] uppercase tracking-[0.15em] text-white/45">
+            Add portrait media
+          </div>
+        )}
+        <span className="reel-index font-mono-ui">0{index + 1}</span>
+      </div>
+      <div className="reel-copy">
+        <div>
+          <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">{reel.category}</p>
+          <h3 className="mt-3 font-display text-3xl leading-none tracking-wide text-foreground">{reel.title}</h3>
+          <p className="mt-3 text-xs leading-5 text-white/55">{reel.description}</p>
+        </div>
+        {reel.link && (
+          <a
+            href={reel.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="project-link"
+            data-testid={`link-reel-${reel.id}`}
+          >
+            Open reel <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        )}
+      </div>
+    </article>
+  );
+}
+
 function AboutSection() {
   return (
     <section id="about" className="section-shell section-rule" data-testid="section-about">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
         <div className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-28">
           <div className="reveal">
-            <SectionMarker number="02" label={bio.heading} />
+            <SectionMarker number="03" label={bio.heading} />
             <h2 className="mt-10 max-w-[390px] font-display text-7xl leading-[0.88] tracking-wide text-foreground sm:text-8xl">
               Hands on.
               <br />
@@ -312,7 +409,7 @@ function SkillsSection() {
       <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="reveal">
-            <SectionMarker number="03" label="The toolkit" />
+            <SectionMarker number="04" label="The toolkit" />
             <p className="mt-7 max-w-[440px] text-sm leading-7 text-white/55">
               Every project gets the same attention to rhythm, texture, and the small decisions that make a cut feel alive.
             </p>
@@ -339,7 +436,7 @@ function WorkSection() {
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end reveal">
           <div>
-            <SectionMarker number="04" label="Selected work" />
+            <SectionMarker number="05" label="Selected work" />
             <h2 className="mt-9 font-display text-8xl leading-[0.8] tracking-wide text-foreground sm:text-[10rem]">
               The <span className="text-primary">cut.</span>
             </h2>
@@ -414,7 +511,7 @@ function DriveSection() {
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-24">
           <div className="reveal">
-            <SectionMarker number="05" label="The archive" />
+            <SectionMarker number="06" label="The archive" />
             <h2 className="mt-9 max-w-[430px] font-display text-7xl leading-[0.86] tracking-wide text-foreground sm:text-8xl">
               More work,
               <br />
@@ -476,7 +573,7 @@ function ContactSection() {
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
         <div className="grid gap-16 lg:grid-cols-[1fr_0.8fr] lg:gap-28">
           <div className="reveal">
-            <SectionMarker number="06" label="Make something" />
+            <SectionMarker number="07" label="Make something" />
             <h2 className="mt-10 max-w-[700px] font-display text-[clamp(5rem,12vw,11rem)] leading-[0.78] tracking-wide text-foreground">
               Let’s make
               <br />
