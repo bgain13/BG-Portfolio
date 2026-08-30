@@ -325,7 +325,7 @@ export const driveFolders = [
 export const contact: ContactInfo = {
   email: "bivashgain6@gmail.com",
   phone: "+91 9547289013",
-  location: "India",
+  location: "India, West Bengal, Kolkata",
   linkedin: "https://linkedin.com/in/bivashgain",
   instagram: "https://instagram.com/bivashgain",
   youtubeChannel: "https://youtube.com/@bivashgain",
