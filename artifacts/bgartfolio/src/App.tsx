@@ -28,6 +28,7 @@ import {
   projects,
   reels,
   skills,
+  getServiceSlug,
   type Reel,
   type Project,
 } from '@/lib/portfolio-data';
@@ -417,22 +418,16 @@ function SkillsSection() {
           </div>
           <div className="skills-ticker reveal" data-testid="list-skills">
             {skills.map((skill, index) => (
-              skill === 'Video Editing' || skill === 'Videography' ? (
-                <Link
-                  key={skill}
-                  href={`/services/${skill.toLowerCase().replaceAll(' ', '-')}`}
-                  className="skill-item skill-item-link"
-                  data-testid={`link-skill-${index + 1}`}
-                >
-                  {skill}
-                  <span className="skill-star" aria-hidden="true" />
-                </Link>
-              ) : (
-                <span key={skill} className="skill-item" data-testid={`text-skill-${index + 1}`}>
-                  {skill}
-                  <span className="skill-star" aria-hidden="true" />
-                </span>
-              )
+              <Link
+                key={skill}
+                href={`/services/${getServiceSlug(skill)}`}
+                className="skill-item skill-item-link"
+                data-testid={`link-skill-${index + 1}`}
+                aria-label={`Open ${skill} service page`}
+              >
+                {skill}
+                <span className="skill-star" aria-hidden="true" />
+              </Link>
             ))}
           </div>
         </div>

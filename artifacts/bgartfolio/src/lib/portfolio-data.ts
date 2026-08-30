@@ -6,6 +6,8 @@ export type Project = {
   youtubeUrl?: string;
   driveUrl?: string;
   thumbnail?: string;
+  imageUrl?: string;
+  videoUrl?: string;
   link?: string;
 };
 
@@ -67,6 +69,10 @@ export const skills = [
   "YouTube & Social Content",
 ];
 
+export function getServiceSlug(label: string) {
+  return label.toLowerCase().replaceAll('&', 'and').replaceAll(' ', '-');
+}
+
 export const servicePages: Record<string, ServicePage> = {
   "video-editing": {
     slug: "video-editing",
@@ -97,6 +103,96 @@ export const servicePages: Record<string, ServicePage> = {
       "Edit-ready footage with intentional coverage",
     ],
     projectIds: ["project-1", "project-5", "project-4"],
+  },
+  "motion-graphics": {
+    slug: "motion-graphics",
+    title: "Motion Graphics",
+    eyebrow: "Type / Energy / Movement",
+    intro: "Graphic language that gives every frame a little more momentum.",
+    description:
+      "I use typography, transitions, compositing, and visual effects to make information feel immediate and give a film its own visual rhythm.",
+    capabilities: [
+      "Kinetic typography and title design",
+      "Transitions, compositing, and visual effects",
+      "Animated social assets and promotional graphics",
+      "Motion systems that stay consistent across a project",
+    ],
+    projectIds: ["project-6", "project-3", "project-2"],
+  },
+  "color-grading": {
+    slug: "color-grading",
+    title: "Color Grading",
+    eyebrow: "Tone / Texture / Atmosphere",
+    intro: "A considered palette that makes the feeling of a scene land.",
+    description:
+      "Color is where the story gets its atmosphere. I shape contrast, skin tones, and palette so footage feels cohesive, intentional, and true to the moment.",
+    capabilities: [
+      "Cinematic color development",
+      "Skin tone and exposure balancing",
+      "Look matching across multiple cameras",
+      "Final grade for web, social, and screening",
+    ],
+    projectIds: ["project-1", "project-4", "project-5"],
+  },
+  "sound-design": {
+    slug: "sound-design",
+    title: "Sound Design",
+    eyebrow: "Listen / Layer / Land",
+    intro: "The detail you feel before you notice you heard it.",
+    description:
+      "Music, dialogue, ambience, and small sound details work together to make edits feel physical. I build a clean, intentional sound bed that supports the cut.",
+    capabilities: [
+      "Dialogue cleanup and balancing",
+      "Music editing and beat-driven pacing",
+      "Ambience, foley, and transition effects",
+      "Final mix for digital delivery",
+    ],
+    projectIds: ["project-1", "project-5", "project-3"],
+  },
+  "post-production": {
+    slug: "post-production",
+    title: "Post-Production",
+    eyebrow: "Organise / Refine / Deliver",
+    intro: "A calm, complete process from rushes to ready-to-share film.",
+    description:
+      "Good post-production is a series of small decisions made carefully. I keep the process organised while carrying a project through edit, graphics, grade, sound, and delivery.",
+    capabilities: [
+      "Media organisation and edit preparation",
+      "Offline edit through picture lock",
+      "Graphics, color, and sound finishing",
+      "Exports sized for every final destination",
+    ],
+    projectIds: ["project-3", "project-4", "project-5", "project-6"],
+  },
+  "graphics-creation": {
+    slug: "graphics-creation",
+    title: "Graphics Creation",
+    eyebrow: "Shape / Signal / Identity",
+    intro: "Visual pieces that make a project feel recognisably yours.",
+    description:
+      "From clean titles to campaign-ready visuals, I create graphics that support the story, respect the brand, and remain clear at every size.",
+    capabilities: [
+      "Titles, lower thirds, and end cards",
+      "Branded social templates",
+      "Promotional layouts and visual assets",
+      "Typography and graphic direction",
+    ],
+    projectIds: ["project-6", "project-3", "project-2"],
+  },
+  "youtube-and-social-content": {
+    slug: "youtube-and-social-content",
+    title: "YouTube & Social Content",
+    eyebrow: "Hook / Hold / Share",
+    intro: "Short-form stories built for the scroll without feeling disposable.",
+    description:
+      "I shape content around the way audiences watch now: a clear hook, purposeful pacing, strong visual beats, and versions that are ready for each platform.",
+    capabilities: [
+      "YouTube Shorts and vertical edits",
+      "Hooks, pacing, and retention-focused structure",
+      "Platform-ready crops and captions",
+      "Repeatable content systems for creators and brands",
+    ],
+    projectIds: ["project-2", "project-7", "project-8"],
   },
 };
 

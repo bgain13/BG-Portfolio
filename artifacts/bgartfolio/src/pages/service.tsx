@@ -6,6 +6,8 @@ import NotFound from '@/pages/not-found';
 
 function ServiceProjectCard({ project }: { project: Project }) {
   const embedUrl = project.youtubeUrl ? getYouTubeEmbedUrl(project.youtubeUrl) : null;
+  const imageUrl = project.imageUrl ?? project.thumbnail;
+  const projectLink = project.youtubeUrl ?? project.driveUrl ?? project.link;
 
   return (
     <article className="service-project-card">
@@ -19,9 +21,19 @@ function ServiceProjectCard({ project }: { project: Project }) {
             allowFullScreen
             className="absolute inset-0 h-full w-full border-0"
           />
+        ) : project.videoUrl ? (
+          <video
+            src={project.videoUrl}
+            controls
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-cover"
+          />
+        ) : imageUrl ? (
+          <img src={imageUrl} alt={project.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center bg-secondary font-mono-ui text-[9px] uppercase tracking-[0.15em] text-white/45">
-            Project preview coming soon
+            Add project media
           </div>
         )}
         <span className="project-index font-mono-ui">BG.</span>
@@ -32,14 +44,14 @@ function ServiceProjectCard({ project }: { project: Project }) {
           <h2 className="mt-3 font-display text-4xl leading-none tracking-wide text-foreground">{project.title}</h2>
           <p className="mt-4 text-sm leading-6 text-white/55">{project.description}</p>
         </div>
-        {project.youtubeUrl && (
+        {projectLink && (
           <a
-            href={project.youtubeUrl}
+            href={projectLink}
             target="_blank"
             rel="noopener noreferrer"
             className="project-link"
           >
-            Watch full piece <ExternalLink className="h-3.5 w-3.5" />
+            {project.youtubeUrl ? 'Watch full piece' : 'Open project'} <ExternalLink className="h-3.5 w-3.5" />
           </a>
         )}
       </div>
