@@ -19,6 +19,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import ServicePage from '@/pages/service';
 import {
   bio,
   contact,
@@ -31,7 +32,7 @@ import {
   type Project,
 } from '@/lib/portfolio-data';
 import { getYouTubeEmbedUrl } from '@/lib/youtube';
-import { Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
+import { Link, Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
 
 const queryClient = new QueryClient();
 
@@ -416,10 +417,22 @@ function SkillsSection() {
           </div>
           <div className="skills-ticker reveal" data-testid="list-skills">
             {skills.map((skill, index) => (
-              <span key={skill} className="skill-item" data-testid={`text-skill-${index + 1}`}>
-                {skill}
-                <span className="skill-star" aria-hidden="true" />
-              </span>
+              skill === 'Video Editing' || skill === 'Videography' ? (
+                <Link
+                  key={skill}
+                  href={`/services/${skill.toLowerCase().replaceAll(' ', '-')}`}
+                  className="skill-item skill-item-link"
+                  data-testid={`link-skill-${index + 1}`}
+                >
+                  {skill}
+                  <span className="skill-star" aria-hidden="true" />
+                </Link>
+              ) : (
+                <span key={skill} className="skill-item" data-testid={`text-skill-${index + 1}`}>
+                  {skill}
+                  <span className="skill-star" aria-hidden="true" />
+                </span>
+              )
             ))}
           </div>
         </div>
@@ -690,6 +703,7 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/services/:slug" component={ServicePage} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

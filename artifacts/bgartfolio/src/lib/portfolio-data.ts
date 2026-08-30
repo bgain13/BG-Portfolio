@@ -20,6 +20,16 @@ export type Reel = {
   link?: string;
 };
 
+export type ServicePage = {
+  slug: string;
+  title: string;
+  eyebrow: string;
+  intro: string;
+  description: string;
+  capabilities: string[];
+  projectIds: string[];
+};
+
 export type ContactInfo = {
   email: string;
   phone: string;
@@ -56,6 +66,39 @@ export const skills = [
   "Graphics Creation",
   "YouTube & Social Content",
 ];
+
+export const servicePages: Record<string, ServicePage> = {
+  "video-editing": {
+    slug: "video-editing",
+    title: "Video Editing",
+    eyebrow: "Story / Rhythm / Finish",
+    intro: "Raw footage, shaped into something people want to watch.",
+    description:
+      "From the first assembly to the final export, every cut is built around clarity, feeling, and momentum. I bring structure to long-form stories and energy to short-form content without losing the human moment.",
+    capabilities: [
+      "Story-first cutting and pacing",
+      "Wedding, event, and documentary edits",
+      "Short-form edits for YouTube and social",
+      "Color grading, sound design, and final delivery",
+    ],
+    projectIds: ["project-1", "project-2", "project-3", "project-6"],
+  },
+  videography: {
+    slug: "videography",
+    title: "Videography",
+    eyebrow: "Capture / Observe / Compose",
+    intro: "Thoughtful coverage that gives the edit something real to work with.",
+    description:
+      "I approach production with the edit already in mind: looking for honest details, strong compositions, and the moments that give a finished film its pulse.",
+    capabilities: [
+      "Event and wedding coverage",
+      "Location shooting and visual planning",
+      "Interview and documentary-style coverage",
+      "Edit-ready footage with intentional coverage",
+    ],
+    projectIds: ["project-1", "project-5", "project-4"],
+  },
+};
 
 export const projects: Project[] = [
   {
