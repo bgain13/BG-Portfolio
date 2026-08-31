@@ -1,0 +1,10 @@
+[
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e901", "position": 1, "filepath": "src/pages/slides/01BivashGain.tsx", "title": "Bivash Gain", "description": "A cinematic portfolio for video editing, videography, and motion design", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e902", "position": 2, "filepath": "src/pages/slides/02PortfolioPulse.tsx", "title": "A portfolio with a pulse", "description": "The visual language behind the portfolio", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e903", "position": 3, "filepath": "src/pages/slides/03Reels.tsx", "title": "Built around how people watch", "description": "The Reels viewing rhythm", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e904", "position": 4, "filepath": "src/pages/slides/04Toolkit.tsx", "title": "The toolkit becomes a destination", "description": "Eight dedicated service pages", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e905", "position": 5, "filepath": "src/pages/slides/05ServiceSystem.tsx", "title": "One reusable service system", "description": "A consistent architecture for every service", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e906", "position": 6, "filepath": "src/pages/slides/06Archive.tsx", "title": "Ready for the growing archive", "description": "Future-ready project media", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e907", "position": 7, "filepath": "src/pages/slides/07Contact.tsx", "title": "The contact path stays close", "description": "Direct contact from every page", "speakerNotes": "" },
+  { "id": "8e8a4c2d-10b1-4bf8-ae01-2bd5f3c1e908", "position": 8, "filepath": "src/pages/slides/08Closing.tsx", "title": "A portfolio designed to grow", "description": "A system ready for the next story", "speakerNotes": "" }
+]

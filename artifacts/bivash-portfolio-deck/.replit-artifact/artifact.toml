@@ -1,0 +1,28 @@
+kind = "slides"
+previewPath = "/bivash-portfolio-deck/"
+title = "Bivash Portfolio Showcase"
+description = "An eight-slide visual showcase of Bivash Gain's cinematic portfolio website, covering its visual direction, Reels experience, service pages, future-ready project media, and contact flow."
+version = "1.0.0"
+id = "artifacts/bivash-portfolio-deck"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/bivash-portfolio-deck/" ]
+localPort = 19021
+
+[services.development]
+run = "pnpm --filter @workspace/bivash-portfolio-deck run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/bivash-portfolio-deck", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/bivash-portfolio-deck/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19021"
+BASE_PATH = "/bivash-portfolio-deck/"
