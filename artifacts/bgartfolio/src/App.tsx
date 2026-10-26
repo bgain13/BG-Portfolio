@@ -25,14 +25,9 @@ import ServicePage from '@/pages/service';
 import {
   bio,
   contact,
-  driveFolders,
   personalInfo,
-  projects,
-  reels,
   skills,
   getServiceSlug,
-  type Reel,
-  type Project,
 } from '@/lib/portfolio-data';
 import { getYouTubeEmbedUrl } from '@/lib/youtube';
 import { Link, Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
@@ -113,7 +108,7 @@ function Home() {
         <ReelsSection managedAssets={managedAssets.filter((asset) => asset.assetType === 'reel')} />
         <AboutSection />
         <SkillsSection />
-        <WorkSection managedAssets={managedAssets.filter((asset) => ['video', 'graphic', 'project'].includes(asset.assetType))} />
+        <WorkSection managedAssets={managedAssets.filter((asset) => ['reel', 'video', 'graphic', 'project'].includes(asset.assetType))} />
         <DriveSection managedAssets={managedAssets.filter((asset) => asset.assetType === 'file' || asset.assetType === 'project')} />
         <ContactSection />
       </main>
@@ -286,11 +281,8 @@ function ReelsSection({ managedAssets }: { managedAssets: Asset[] }) {
         </div>
 
         <div className="reel-rail mt-14" role="list" aria-label="Portrait reels">
-          {reels.map((reel, index) => (
-            <ReelCard key={reel.id} reel={reel} index={index} />
-          ))}
           {managedAssets.map((asset, index) => (
-            <ManagedReelCard key={asset.id} asset={asset} index={reels.length + index} />
+            <ManagedReelCard key={asset.id} asset={asset} index={index} />
           ))}
         </div>
       </div>
@@ -330,68 +322,6 @@ function ManagedReelCard({ asset, index }: { asset: Asset; index: number }) {
           {asset.description && <p className="mt-3 text-xs leading-5 text-white/55">{asset.description}</p>}
         </div>
         {openUrl && <a href={openUrl} target="_blank" rel="noopener noreferrer" className="project-link" data-testid={`link-managed-reel-${asset.id}`}>Open reel <ExternalLink className="h-3.5 w-3.5" /></a>}
-      </div>
-    </article>
-  );
-}
-
-function ReelCard({ reel, index }: { reel: Reel; index: number }) {
-  const embedUrl = reel.youtubeUrl ? getYouTubeEmbedUrl(reel.youtubeUrl) : null;
-
-  return (
-    <article className="reel-card reveal" role="listitem" data-testid={`card-reel-${reel.id}`}>
-      <div className="reel-media">
-        {embedUrl ? (
-          <iframe
-            src={embedUrl}
-            title={reel.title}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full border-0"
-            data-testid={`iframe-reel-${reel.id}`}
-          />
-        ) : reel.videoUrl ? (
-          <video
-            src={reel.videoUrl}
-            controls
-            playsInline
-            preload="metadata"
-            className="h-full w-full object-cover"
-            data-testid={`video-reel-${reel.id}`}
-          />
-        ) : reel.imageUrl ? (
-          <img
-            src={reel.imageUrl}
-            alt={reel.title}
-            loading="lazy"
-            className="h-full w-full object-cover"
-            data-testid={`image-reel-${reel.id}`}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-secondary text-center font-mono-ui text-[9px] uppercase tracking-[0.15em] text-white/45">
-            Add portrait media
-          </div>
-        )}
-        <span className="reel-index font-mono-ui">0{index + 1}</span>
-      </div>
-      <div className="reel-copy">
-        <div>
-          <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">{reel.category}</p>
-          <h3 className="mt-3 font-display text-3xl leading-none tracking-wide text-foreground">{reel.title}</h3>
-          <p className="mt-3 text-xs leading-5 text-white/55">{reel.description}</p>
-        </div>
-        {reel.link && (
-          <a
-            href={reel.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-link"
-            data-testid={`link-reel-${reel.id}`}
-          >
-            Open reel <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        )}
       </div>
     </article>
   );
@@ -481,8 +411,6 @@ function SkillsSection() {
 }
 
 function WorkSection({ managedAssets }: { managedAssets: Asset[] }) {
-  const youtubeProjects = projects.filter((project) => project.youtubeUrl);
-
   return (
     <section id="work" className="section-shell section-rule" data-testid="section-work">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
@@ -498,11 +426,8 @@ function WorkSection({ managedAssets }: { managedAssets: Asset[] }) {
           </p>
         </div>
         <div className="work-grid mt-16">
-          {youtubeProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
           {managedAssets.map((asset, index) => (
-            <ManagedWorkCard key={asset.id} asset={asset} index={youtubeProjects.length + index} />
+            <ManagedWorkCard key={asset.id} asset={asset} index={index} />
           ))}
         </div>
       </div>
@@ -545,57 +470,7 @@ function ManagedWorkCard({ asset, index }: { asset: Asset; index: number }) {
   );
 }
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const embedUrl = project.youtubeUrl ? getYouTubeEmbedUrl(project.youtubeUrl) : null;
-  const isFeatured = index === 0;
-
-  return (
-    <article className={`project-card reveal ${isFeatured ? 'project-card-featured' : ''}`} data-testid={`card-project-${project.id}`}>
-      <div className="project-media">
-        {embedUrl ? (
-          <iframe
-            src={embedUrl}
-            title={project.title}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full border-0"
-            data-testid={`iframe-project-${project.id}`}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-secondary">
-            <Play className="h-10 w-10 text-primary" />
-          </div>
-        )}
-        <span className="project-index font-mono-ui">0{index + 1}</span>
-      </div>
-      <div className="project-copy">
-        <div>
-          <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">{project.category}</p>
-          <h3 className="mt-3 font-display text-4xl leading-none tracking-wide text-foreground">{project.title}</h3>
-          <p className="mt-4 max-w-[430px] text-sm leading-6 text-white/55" data-testid={`text-project-description-${project.id}`}>
-            {project.description}
-          </p>
-        </div>
-        {project.youtubeUrl && (
-          <a
-            href={project.youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-link"
-            data-testid={`link-youtube-${project.id}`}
-          >
-            Watch on YouTube <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        )}
-      </div>
-    </article>
-  );
-}
-
 function DriveSection({ managedAssets }: { managedAssets: Asset[] }) {
-  const driveProjects = projects.filter((project) => project.driveUrl);
-
   return (
     <section className="drive-section section-rule" data-testid="section-drive">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
@@ -608,36 +483,17 @@ function DriveSection({ managedAssets }: { managedAssets: Asset[] }) {
               <span className="text-accent">off the reel.</span>
             </h2>
             <p className="mt-8 max-w-[360px] text-sm leading-7 text-white/55">
-              Longer projects and additional samples stored on Google Drive.
+              Cloud-hosted projects, files, and full portfolio folders.
             </p>
           </div>
           <div className="reveal lg:pt-14">
             <div className="drive-list">
-              {driveProjects.map((project, index) => (
-                <a
-                  key={project.id}
-                  href={project.driveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="drive-item group"
-                  data-testid={`link-drive-project-${project.id}`}
-                >
-                  <span className="font-mono-ui text-[10px] text-primary">0{index + 1}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-display text-4xl tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary">
-                      {project.title}
-                    </span>
-                    <span className="mt-2 block text-xs text-white/45">{project.description}</span>
-                  </span>
-                  <ArrowUpRight className="h-5 w-5 shrink-0 text-white/35 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" />
-                </a>
-              ))}
               {managedAssets.map((asset, index) => {
                 const href = asset.externalUrl || publicMediaUrl(asset.mediaUrl);
                 if (!href) return null;
                 return (
                   <a key={asset.id} href={href} target="_blank" rel="noopener noreferrer" className="drive-item group" data-testid={`link-managed-archive-${asset.id}`}>
-                    <span className="font-mono-ui text-[10px] text-primary">{String(driveProjects.length + index + 1).padStart(2, '0')}</span>
+                    <span className="font-mono-ui text-[10px] text-primary">{String(index + 1).padStart(2, '0')}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-display text-4xl tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary">{asset.title}</span>
                       <span className="mt-2 block text-xs text-white/45">{asset.description || asset.category}</span>
@@ -648,21 +504,7 @@ function DriveSection({ managedAssets }: { managedAssets: Asset[] }) {
               })}
             </div>
             <div className="mt-10 border-t border-white/15 pt-6">
-              <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-white/40">Full portfolio folders</p>
-              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
-                {driveFolders.map((folder) => (
-                  <a
-                    key={folder.url}
-                    href={folder.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-foreground underline decoration-white/25 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary"
-                    data-testid={`link-drive-folder-${folder.title.toLowerCase().replaceAll(' ', '-')}`}
-                  >
-                    {folder.title} <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                ))}
-              </div>
+              <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-white/40">Managed from the admin library</p>
             </div>
           </div>
         </div>

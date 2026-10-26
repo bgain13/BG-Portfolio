@@ -24,6 +24,11 @@ export const assetsTable = pgTable('assets', {
     .$onUpdate(() => new Date()),
 });
 
+export const assetImportsTable = pgTable('asset_imports', {
+  key: varchar('key', { length: 120 }).primaryKey(),
+  importedAt: timestamp('imported_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const insertAssetSchema = createInsertSchema(assetsTable)
   .omit({ id: true, createdAt: true, updatedAt: true })
   .extend({

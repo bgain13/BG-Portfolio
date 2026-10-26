@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { seedLegacyPortfolioAssets } from "./lib/seedLegacyPortfolioAssets";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +16,23 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
+async function startServer() {
+  const importedAssetCount = await seedLegacyPortfolioAssets();
+  if (importedAssetCount > 0) {
+    logger.info({ importedAssetCount }, "Imported legacy portfolio assets");
   }
 
-  logger.info({ port }, "Server listening");
+  app.listen(port, (err) => {
+    if (err) {
+      logger.error({ err }, "Error listening on port");
+      process.exit(1);
+    }
+
+    logger.info({ port }, "Server listening");
+  });
+}
+
+void startServer().catch((err: unknown) => {
+  logger.error({ err }, "Failed to initialize the API server");
+  process.exit(1);
 });

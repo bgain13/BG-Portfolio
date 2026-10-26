@@ -71,12 +71,12 @@ const assetTypes: Array<{ value: AssetType; label: string }> = [
   { value: 'project', label: 'Projects' },
 ];
 
-const typeMeta: Record<AssetAssetType, { label: string; icon: typeof Film; color: string }> = {
-  reel: { label: 'Reel', icon: Film, color: 'lime' },
-  video: { label: 'Video', icon: Video, color: 'coral' },
-  graphic: { label: 'Graphic', icon: ImageIcon, color: 'sky' },
-  file: { label: 'File', icon: File, color: 'violet' },
-  project: { label: 'Project', icon: FolderOpen, color: 'amber' },
+const typeMeta: Record<AssetAssetType, { label: string; icon: typeof Film; color: string; placementHint: string }> = {
+  reel: { label: 'Reel', icon: Film, color: 'lime', placementHint: 'Short-form content — appears in Reels and Selected Work.' },
+  video: { label: 'Video', icon: Video, color: 'coral', placementHint: 'Long-form or standard video — appears in Selected Work.' },
+  graphic: { label: 'Graphic', icon: ImageIcon, color: 'sky', placementHint: 'Still images and design work — appears in Selected Work.' },
+  file: { label: 'File', icon: File, color: 'violet', placementHint: 'Cloud files and portfolio folders — appears in The Archive.' },
+  project: { label: 'Project', icon: FolderOpen, color: 'amber', placementHint: 'Cloud-hosted project — appears in Selected Work and The Archive.' },
 };
 
 const blankDraft: DraftAsset = {
@@ -433,7 +433,7 @@ function AssetEditor({ open, editingAsset, draft, setDraft, onOpenChange, onSubm
       <DialogContent className="admin-dialog-content">
         <DialogHeader className="admin-dialog-header"><p className="admin-eyebrow">{editingAsset ? 'Edit asset' : 'New asset'} / library</p><DialogTitle>{editingAsset ? 'Refine the frame.' : 'Add to the cut.'}</DialogTitle><DialogDescription>Keep the working details clear. You can change the public status at any time.</DialogDescription></DialogHeader>
         <form onSubmit={onSubmit} className="admin-form" data-testid="form-asset-editor">
-          <div className="admin-form-grid"><label><span>Title <b>*</b></span><input autoFocus value={draft.title} onChange={(event) => update('title', event.target.value)} placeholder="e.g. Monsoon — title sequence" data-testid="input-asset-title" required /></label><label><span>Asset type</span><select value={draft.assetType} onChange={(event) => update('assetType', event.target.value as AssetAssetType)} data-testid="select-asset-type">{assetTypes.slice(1).map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}</select></label></div>
+          <div className="admin-form-grid"><label><span>Title <b>*</b></span><input autoFocus value={draft.title} onChange={(event) => update('title', event.target.value)} placeholder="e.g. Monsoon — title sequence" data-testid="input-asset-title" required /></label><label><span>Asset type</span><select value={draft.assetType} onChange={(event) => update('assetType', event.target.value as AssetAssetType)} data-testid="select-asset-type">{assetTypes.slice(1).map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}</select><small className="admin-type-guidance">{typeMeta[draft.assetType].placementHint}</small></label></div>
           <div className="admin-form-grid"><label><span>Category</span><input value={draft.category} onChange={(event) => update('category', event.target.value)} placeholder="Commercial / Documentary" data-testid="input-asset-category" /></label><label><span>Sort order</span><input type="number" value={draft.sortOrder} onChange={(event) => update('sortOrder', event.target.value)} data-testid="input-asset-sort-order" /></label></div>
           <label><span>Description</span><textarea value={draft.description} onChange={(event) => update('description', event.target.value)} placeholder="A short note about the cut, client, or story…" rows={3} data-testid="textarea-asset-description" /></label>
            <div className="admin-upload-box"><div><span className="admin-form-label">Media file</span><p>{draft.mediaUrl ? 'A stored file is attached.' : 'Upload a video, image, or project file directly to cloud storage.'}</p></div><label className="admin-upload-button"><UploadCloud className="h-4 w-4" /> {upload.isUploading ? `Uploading ${upload.progress}%` : draft.mediaUrl ? 'Replace file' : 'Choose file'}<input className="sr-only" type="file" accept="video/*,image/*,application/pdf,.zip,.aep,.prproj" disabled={upload.isUploading} onChange={async (event) => { const file = event.target.files?.[0]; if (!file) return; setUploadTarget('mediaUrl'); const response = await upload.uploadFile(file); if (response) { setDraft((current) => ({ ...current, mediaUrl: response.objectPath })); toast({ title: 'Upload complete', description: 'The media file is attached to this asset.' }); } else { toast({ title: 'Upload failed', description: upload.error?.message ?? 'The file could not be stored. Try again.', variant: 'destructive' }); } setUploadTarget(null); event.target.value = ''; }} data-testid="input-asset-media-upload" /></label>{upload.isUploading && <div className="admin-upload-progress"><span style={{ width: `${upload.progress}%` }} /></div>}{draft.mediaUrl && <p className="admin-upload-path" data-testid="text-uploaded-media-path"><Link2 className="h-3.5 w-3.5" /> {draft.mediaUrl}</p>}</div>
