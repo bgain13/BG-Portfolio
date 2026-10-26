@@ -1,0 +1,1 @@
+- [Orval and Zod compatibility](orval-zod-compat.md) — Keep generated validators aligned with this workspace's Zod major version.

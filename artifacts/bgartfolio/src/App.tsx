@@ -1,5 +1,6 @@
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useListPublicAssets, type Asset } from '@workspace/api-client-react';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -19,6 +20,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import Admin from '@/pages/admin';
 import ServicePage from '@/pages/service';
 import {
   bio,
@@ -71,6 +73,8 @@ function useReveal() {
 
 function Home() {
   const pageRef = useReveal();
+  const publicAssetsQuery = useListPublicAssets();
+  const managedAssets = publicAssetsQuery.data ?? [];
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
 
@@ -106,11 +110,11 @@ function Home() {
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} activeSection={activeSection} />
       <main>
         <HeroSection />
-        <ReelsSection />
+        <ReelsSection managedAssets={managedAssets.filter((asset) => asset.assetType === 'reel')} />
         <AboutSection />
         <SkillsSection />
-        <WorkSection />
-        <DriveSection />
+        <WorkSection managedAssets={managedAssets.filter((asset) => ['video', 'graphic', 'project'].includes(asset.assetType))} />
+        <DriveSection managedAssets={managedAssets.filter((asset) => asset.assetType === 'file' || asset.assetType === 'project')} />
         <ContactSection />
       </main>
       <Footer />
@@ -260,7 +264,7 @@ function HeroSection() {
   );
 }
 
-function ReelsSection() {
+function ReelsSection({ managedAssets }: { managedAssets: Asset[] }) {
   return (
     <section id="reels" className="reels-section section-rule" data-testid="section-reels">
       <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
@@ -285,9 +289,49 @@ function ReelsSection() {
           {reels.map((reel, index) => (
             <ReelCard key={reel.id} reel={reel} index={index} />
           ))}
+          {managedAssets.map((asset, index) => (
+            <ManagedReelCard key={asset.id} asset={asset} index={reels.length + index} />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function publicMediaUrl(path: string | null) {
+  if (!path) return null;
+  return path.startsWith('/objects/') ? `/api/storage${path}` : path;
+}
+
+function ManagedReelCard({ asset, index }: { asset: Asset; index: number }) {
+  const mediaUrl = publicMediaUrl(asset.mediaUrl);
+  const thumbnailUrl = publicMediaUrl(asset.thumbnailUrl);
+  const embedUrl = asset.externalUrl ? getYouTubeEmbedUrl(asset.externalUrl) : null;
+  const openUrl = asset.externalUrl || mediaUrl;
+
+  return (
+    <article className="reel-card reveal" role="listitem" data-testid={`card-managed-reel-${asset.id}`}>
+      <div className="reel-media">
+        {embedUrl ? (
+          <iframe src={embedUrl} title={asset.title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="absolute inset-0 h-full w-full border-0" data-testid={`iframe-managed-reel-${asset.id}`} />
+        ) : mediaUrl && /\.(mp4|webm|mov|m4v)(?:$|[?#])/i.test(mediaUrl) ? (
+          <video src={mediaUrl} poster={thumbnailUrl ?? undefined} controls playsInline preload="metadata" className="h-full w-full object-cover" data-testid={`video-managed-reel-${asset.id}`} />
+        ) : thumbnailUrl || mediaUrl ? (
+          <img src={thumbnailUrl || mediaUrl || ''} alt={asset.title} loading="lazy" className="h-full w-full object-cover" data-testid={`image-managed-reel-${asset.id}`} />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-secondary text-center font-mono-ui text-[9px] uppercase tracking-[0.15em] text-white/45">Reel / {String(index + 1).padStart(2, '0')}</div>
+        )}
+        <span className="reel-index font-mono-ui">{String(index + 1).padStart(2, '0')}</span>
+      </div>
+      <div className="reel-copy">
+        <div>
+          <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">{asset.category}</p>
+          <h3 className="mt-3 font-display text-3xl leading-none tracking-wide text-foreground">{asset.title}</h3>
+          {asset.description && <p className="mt-3 text-xs leading-5 text-white/55">{asset.description}</p>}
+        </div>
+        {openUrl && <a href={openUrl} target="_blank" rel="noopener noreferrer" className="project-link" data-testid={`link-managed-reel-${asset.id}`}>Open reel <ExternalLink className="h-3.5 w-3.5" /></a>}
+      </div>
+    </article>
   );
 }
 
@@ -436,7 +480,7 @@ function SkillsSection() {
   );
 }
 
-function WorkSection() {
+function WorkSection({ managedAssets }: { managedAssets: Asset[] }) {
   const youtubeProjects = projects.filter((project) => project.youtubeUrl);
 
   return (
@@ -457,9 +501,47 @@ function WorkSection() {
           {youtubeProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
+          {managedAssets.map((asset, index) => (
+            <ManagedWorkCard key={asset.id} asset={asset} index={youtubeProjects.length + index} />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function ManagedWorkCard({ asset, index }: { asset: Asset; index: number }) {
+  const mediaUrl = publicMediaUrl(asset.mediaUrl);
+  const thumbnailUrl = publicMediaUrl(asset.thumbnailUrl);
+  const embedUrl = asset.externalUrl ? getYouTubeEmbedUrl(asset.externalUrl) : null;
+  const visualUrl = thumbnailUrl || mediaUrl;
+  const isVideo = asset.assetType === 'video' || asset.assetType === 'project';
+  const externalUrl = asset.externalUrl || mediaUrl;
+  const Icon = asset.assetType === 'graphic' ? Film : Play;
+
+  return (
+    <article className={`project-card reveal ${index === 0 ? 'project-card-featured' : ''}`} data-testid={`card-managed-project-${asset.id}`}>
+      <div className="project-media">
+        {embedUrl ? (
+          <iframe src={embedUrl} title={asset.title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="absolute inset-0 h-full w-full border-0" data-testid={`iframe-managed-project-${asset.id}`} />
+        ) : isVideo && mediaUrl ? (
+          <video src={mediaUrl} poster={thumbnailUrl ?? undefined} controls playsInline preload="metadata" className="h-full w-full object-cover" data-testid={`video-managed-project-${asset.id}`} />
+        ) : visualUrl ? (
+          <img src={visualUrl} alt={asset.title} loading="lazy" className="h-full w-full object-cover" data-testid={`image-managed-project-${asset.id}`} />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-secondary"><Icon className="h-10 w-10 text-primary" /></div>
+        )}
+        <span className="project-index font-mono-ui">{String(index + 1).padStart(2, '0')}</span>
+      </div>
+      <div className="project-copy">
+        <div>
+          <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-primary">{asset.category}</p>
+          <h3 className="mt-3 font-display text-4xl leading-none tracking-wide text-foreground">{asset.title}</h3>
+          {asset.description && <p className="mt-4 max-w-[430px] text-sm leading-6 text-white/55">{asset.description}</p>}
+        </div>
+        {externalUrl && <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="project-link" data-testid={`link-managed-project-${asset.id}`}>Open project <ExternalLink className="h-3.5 w-3.5" /></a>}
+      </div>
+    </article>
   );
 }
 
@@ -511,7 +593,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   );
 }
 
-function DriveSection() {
+function DriveSection({ managedAssets }: { managedAssets: Asset[] }) {
   const driveProjects = projects.filter((project) => project.driveUrl);
 
   return (
@@ -550,6 +632,20 @@ function DriveSection() {
                   <ArrowUpRight className="h-5 w-5 shrink-0 text-white/35 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" />
                 </a>
               ))}
+              {managedAssets.map((asset, index) => {
+                const href = asset.externalUrl || publicMediaUrl(asset.mediaUrl);
+                if (!href) return null;
+                return (
+                  <a key={asset.id} href={href} target="_blank" rel="noopener noreferrer" className="drive-item group" data-testid={`link-managed-archive-${asset.id}`}>
+                    <span className="font-mono-ui text-[10px] text-primary">{String(driveProjects.length + index + 1).padStart(2, '0')}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-display text-4xl tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary">{asset.title}</span>
+                      <span className="mt-2 block text-xs text-white/45">{asset.description || asset.category}</span>
+                    </span>
+                    <ArrowUpRight className="h-5 w-5 shrink-0 text-white/35 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary" />
+                  </a>
+                );
+              })}
             </div>
             <div className="mt-10 border-t border-white/15 pt-6">
               <p className="font-mono-ui text-[9px] uppercase tracking-[0.18em] text-white/40">Full portfolio folders</p>
@@ -697,6 +793,7 @@ function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
+        <Route path="/admin" component={Admin} />
         <Route path="/" component={Home} />
         <Route path="/services/:slug" component={ServicePage} />
         <Route component={NotFound} />
