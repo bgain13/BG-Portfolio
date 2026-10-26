@@ -47,7 +47,6 @@ function useReveal() {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const items = root.querySelectorAll<HTMLElement>('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -59,8 +58,26 @@ function useReveal() {
       },
       { threshold: 0.12 },
     );
-    items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
+    const observeRevealItems = (scope: ParentNode) => {
+      scope.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)').forEach((item) => observer.observe(item));
+    };
+
+    observeRevealItems(root);
+    const mutations = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.matches('.reveal:not(.is-visible)')) observer.observe(node);
+          observeRevealItems(node);
+        });
+      });
+    });
+    mutations.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      mutations.disconnect();
+      observer.disconnect();
+    };
   }, []);
 
   return rootRef;
