@@ -110,6 +110,7 @@ I'm always interested in creative ideas, collaboration, and opportunities to wor
 
 - **GitHub:** [@bgain13](https://github.com/bgain13)
 - **Portfolio Repository:** [BG-Portfolio](https://github.com/bgain13/BG-Portfolio)
+- **Facebook:** [Bivash Gain](https://facebook.com/bgain22)
 
 For professional inquiries, collaborations, or project discussions, feel free to connect with me through my professional channels.
 
